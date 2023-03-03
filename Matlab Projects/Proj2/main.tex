@@ -1,0 +1,287 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[english]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[T1]{fontenc}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\newcommand{\compconj}[1]{%
+  \overline{#1}%
+}
+
+\title{Projekt nr 2}
+\author{Krzysztof Kosz}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+
+\section{Treść zadania}
+
+Rozwiązywanie układu równań liniowych \(Ax = b\), gdzie \(A(n\) x \(n)\) jest macierzą postaci 
+\[A=\begin{pmatrix}
+C & S\\
+-S & C
+\end{pmatrix},\]
+gdzie \(C,S(p\) x \(p)\) i \(n=2p\). Zakładamy, że \(C=diag(c_1,\dots,c_p)\) i \(detC\not=0\) oraz \(S=diag(s_1,\dots,s_p\), gdzie \(c_i^2+s_i^2=1\) dla \(i=1,\dots,p\).
+
+Zaimplementować klasyczną metodę Jacobiego dla \(Ax=b\).
+
+\section{Opis metody}
+
+Do rozwiązywania układu równań skorzystam z metody Jacobiego.
+
+\subsection{Metoda Jacobiego}
+
+Aby metoda miała sens musimy założyć, że elementy na głównej przekątnej macierzy A są niezerowe. Wiemy, z założeń, że w przypadku naszej macierzy jest to spełnione.
+
+Zapiszmy układ równań \(Ax=b\) w nastepującej postaci:
+\[a_{11}x_1 + a_{12}x_2 + \dots + a_{1n}x_n=b_1\]
+\[a_{21}x_1 + a_{22}x_2 + \dots + a_{2n}x_n=b_2\]
+\[\dots\]
+\[a_{n1}x_1 + a_{n2}x_2 + \dots + a_{nn}x_n=b_n\]
+Wyznaczmy z pierwszego równania \(x_1\), z drugiego \(x_2\) itd.:
+\[x_1=(b_1-\sum_{j=2}^{n}a_{1j}x_j)/a_{11}\]
+\[x_2=(b_2-\sum_{j=1, j\not=2}^{n}a_{2j}x_j)/a_{22}\]
+\[\dots\]
+\[x_n=(b_n-\sum_{j=1}^{n-1}a_{nj}x_j)/a_{nn}]\]
+
+Otrzymane wzory są podstawą iteracji. Zaczynając z danego przybliżenia początkowego \(x^{(0)}=(x_1^{(0)},\dots,x_n^{(0)})^T \in \mathbb{R} \) obliczamy kolejne przybliżenia \(x^{(k+1)}(k=0,1,\dots)\) według wzorów:
+\[x_1^{(k+1)}=(b_1-\sum_{j=2}^{n}a_{1j}x_j^{(k)})/a_{11}\]
+\[x_2^{(k+1)}=(b_2-\sum_{j=1, j\not=2}^{n}a_{2j}x_j^{(k)})/a_{22}\]
+\[\dots\]
+\[x_n^{(k+1)}=(b_n-\sum_{j=1}^{n-1}a_{nj}x_j^{(k)})/a_{nn}\]
+Zapiszemy te wzory w postaci macierzowej:
+\[x^{(k+1)}=B_Jx^{(k)}+c_J,\]
+gdzie
+\[x^{(k)}=\begin{pmatrix}
+x_1^{(k)}\\
+\vdots\\
+x_n^{(k)}
+\end{pmatrix},\]
+\[B_J=\begin{pmatrix}
+0 & -\frac{a_{12}}{a_{11}} & \dots & -\frac{a_{1n}}{a_{11}}\\
+-\frac{a_{21}}{a_{22}} & 0 & \dots & -\frac{a_{2n}}{a_{22}}\\
+\vdots & \vdots & \ddots & \vdots\\
+-\frac{a_{n1}}{a_{nn}} & -\frac{a_{n2}}{a_{nn}} & \dots & 0
+\end{pmatrix},\]
+\[c_J=\begin{pmatrix}
+\frac{b_1}{a_{11}}\\
+\vdots\\
+\frac{b_n}{a_{nn}}
+\end{pmatrix}.\]
+Macierz \(B_J\) jest macierzą iteracji w metodzie Jacobiego.
+
+\subsection{Sprawdzanie zbieżności metody Jacobiego}
+
+Warunkiem koniecznym i dostatecznym zbieżności jest \(\rho(B_J)<1\), gdzie \(\rho(B)=\max\limits_{\lambda \in \sigma(B)} |\lambda|\).
+
+Warunkiem zakończenia naszych obliczeń będzie natomiast \(||x^{(k+1)}-x^{(k)}||<d\) lub ilość wykonanych iteracji.
+
+\section{Opis programu}
+
+W moim programie stosuję 2 funkcje. Jedną do wyznaczania rozwiązania ukłądu równań, a drugą do tworzenia macierzy, dla których metoda Jacobiego jest zbieżna.
+
+\subsection{Funkcja Jacobi}
+
+Jako argumenty tej funkcji podajemy macierz \(A\) oraz wektor \(b\), dla których obliczamy \(Ax=b\) (argumenty bez których funkcja nie zadziała) oraz argumenty, które mają przyjętą wartość domyślną w razie ich nie podania tj. d czyli wartość warunku końcowego zakończenia obliczeń (domyślnie \(10^{-40}\)), x czyli wartość przybliżenia początkowego (domyślnie wektor zer) oraz it czyli maksymalna ilość iteracji, po której kończymy obliczenia (domyślnie 1000).
+
+\begin{figure}[H]
+  \caption{Implementacja metody Jacobiego cz.I}
+  \centering
+  \includegraphics[width=0.5\textwidth]{Jacobi1.png}
+\end{figure}
+
+\begin{figure}[H]
+  \caption{Implementacja metody Jacobiego cz.II}
+  \centering
+  \includegraphics[width=0.5\textwidth]{Jacobi2.png}
+\end{figure}
+
+W ciele naszej funkcji najpierw sprawdzamy czy zostały podane wszystkie argumenty. Jeśli nie to przyjmujemy wartości domyślne argumentów.
+
+Następnie wyznaczamy macierz iteracji Jacobiego oraz macierz \(c_J\).
+
+Kolejnym krokiem jest sprawdzenie warunku koniecznego i dostatecznego zbieżności metody Jacobiego. W przypadku gdy promień spektralny macierzy iteracji jest większy bądź równy jeden od razu kończymy działanie funkcji i wypisujemy informację o braku zbieżności. 
+
+W końcu wyznaczamy kolejne wartości wektora wynikowego oraz sprawdzając warunek zakończenia obliczeń przy każdej iteracji. Dodatkowo tworzymy wektor, który potem posłuży nam do stworzenia wykresu.
+
+Na sam koniec tworzymy wykres, który pomoże nam zwizualizować zbieżność metody Jacobiego.
+
+\subsection{Funkcja testMaker}
+
+Jako argument tej funkcji przyjmujemy \(n\) czyli ilość kolumn macierzy \(C\) oraz \(S\).
+
+\begin{figure}[H]
+  \caption{Tworzenie macierzy, dla których metoda Jacobiego jest zbieżna}
+  \centering
+  \includegraphics[width=0.5\textwidth]{testMaker.png}
+\end{figure}
+
+Jako iż \(c_i^2+s_i^2=1\) dla \(i=1,\dots,p\) uznałem, że najłatwiej będzie tworzyć testy za pomocą wektorów sinusów i cosinusów dla tych samych wartości.
+
+Metodą prób i błędów zaobserwowałem zależność, która wskazywała iż metoda Jacobiego jest zbieżna dla macierzy typu podanego w zadaniu, gdy \(c_i>s_i\), dlatego tak też tworzę testy.
+
+\section{Przykłady}
+
+Pokażę kilka przykładów dla macierzy o różnych wymiarach, dla których metoda Jacobiego jest zbieżna oraz takie, dla których nie jest zbieżna. Zaprezentuję również wykresy zbieżności do faktycznej wartości rozwiązania. 
+
+Uznałem, że takie wykresy będą ciekawsze niż prezentowanie błędu w zależności od wielkości warunku kończącego obliczenia, ponieważ jak się można spodziewać im większy warunek kończący obliczenia tym większy błąd obliczeń.
+
+W poniższych przykładach An oraz bn to macierze i wektory z n-tego przykładu, prom oznacza promień spektralny macierzy iteracji Jacobiego, wynikn to rozwiązanie n-tego przykładu, bladWzgledny to błędy względne komórek wektora rozwiązania względem wektora rozwiązania wbudowaną funkcją w matlabie linsolve(). 
+
+Od pewnego momentu ograniczyłem się tylko do wypisywania promienia spektralnego oraz błędu względnego w formie średniego błędu bezwzględnego komórek wektora rozwiązań.
+
+Natomiast w wykresach stosuję określenie błąd bezwzględny. Jest to suma błędów bezwględnych aktualnego wektora rozwiązania względem wektora rozwiązania wbudowaną w matlabie funkcją linsolve().
+
+\subsection{Przykład nr 1}
+
+\begin{figure}[H]
+  \caption{Przyklad nr 1}
+  \centering
+  \includegraphics[width=0.5\textwidth]{przyklad1.png}
+\end{figure}
+
+\begin{figure}[H]
+  \caption{Przykład nr 1}
+  \centering
+  \includegraphics[width=0.5\textwidth]{przyklad1cz2.png}
+\end{figure}
+
+Jak widzimy promień spektralny jest większy od 1, więc funkcja wypisuje wiadomość iż Metoda jacobiego nie jest zbieżna dla tej macierzy.
+
+\subsection{Przykład nr 2}
+
+\begin{figure}[H]
+  \caption{Przyklad nr 2}
+  \centering
+  \includegraphics[width=0.3\textwidth]{przyklad2.png}
+\end{figure}
+
+\begin{figure}[H]
+  \caption{Przykład nr 2 - wykres}
+  \centering
+  \includegraphics[width=0.5\textwidth]{przyklad2wykres.png}
+\end{figure}
+
+Widzimy, że przy tak małej macierzy błąd względny jest na tyle mały, że w matlabie jest reprezentowany jako wartość 0 na obu miejscach wektora wynikowego.
+
+\subsection{Przykład nr 3}
+
+\begin{figure}[H]
+  \caption{Przyklad nr 3}
+  \centering
+  \includegraphics[width=0.5\textwidth]{przyklad3.png}
+\end{figure}
+
+\begin{figure}[H]
+  \caption{Przyklad nr 3}
+  \centering
+  \includegraphics[width=0.3\textwidth]{przyklad3cz2.png}
+\end{figure}
+
+\begin{figure}[H]
+  \caption{Przykład nr 3 - wykres}
+  \centering
+  \includegraphics[width=0.5\textwidth]{przyklad3wykres.png}
+\end{figure}
+
+W tym przykładzie mamy macierz \(2x2\). Widzimy, że pojawia nam się błąd względny, jednak jest on rzędu \(10^{-15}\), więc jest niewielki. 
+
+\subsection{Przykład nr 4}
+
+Od tego przykładu wypisywałem tylko promień spektralny macierzy oraz błąd względny w postaci średniego błędu względnego.
+
+\begin{figure}[H]
+  \caption{Przyklad nr 4}
+  \centering
+  \includegraphics[width=0.3\textwidth]{przyklad4.png}
+\end{figure}
+
+\begin{figure}[H]
+  \caption{Przykład nr 4 - wykres}
+  \centering
+  \includegraphics[width=0.5\textwidth]{przyklad4wykres.png}
+\end{figure}
+
+W tym przypadku mamy macierz rozmiaru \(10x10\). Błąd względny jest rzędu \(10^{-17}\).
+ 
+\subsection{Przykład nr 5}
+
+\begin{figure}[H]
+  \caption{Przyklad nr 5}
+  \centering
+  \includegraphics[width=0.3\textwidth]{przyklad5.png}
+\end{figure}
+
+\begin{figure}[H]
+  \caption{Przykład nr 5 - wykres}
+  \centering
+  \includegraphics[width=0.5\textwidth]{przyklad5wykres.png}
+\end{figure}
+
+W tym przypadku mamy macierz rozmiaru \(100x100\). Błąd względny jest rzędu \(10^{-16}\).
+
+\subsection{Przykład nr 6}
+
+\begin{figure}[H]
+  \caption{Przyklad nr 6}
+  \centering
+  \includegraphics[width=0.3\textwidth]{przyklad6.png}
+\end{figure}
+
+\begin{figure}[H]
+  \caption{Przykład nr 6 - wykres}
+  \centering
+  \includegraphics[width=0.5\textwidth]{przyklad6wykres.png}
+\end{figure}
+
+W tym przypadku mamy macierz rozmiaru \(200x200\). Błąd względny jest rzędu \(10^{-16}\).
+
+\subsection{Przykład nr 7}
+
+\begin{figure}[H]
+  \caption{Przyklad nr 7}
+  \centering
+  \includegraphics[width=0.3\textwidth]{przyklad7.png}
+\end{figure}
+
+\begin{figure}[H]
+  \caption{Przykład nr 7 - wykres}
+  \centering
+  \includegraphics[width=0.5\textwidth]{przyklad7wykres.png}
+\end{figure}
+
+W tym przypadku mamy macierz rozmiaru \(400x400\). Błąd względny jest rzędu \(10^{-16}\).
+
+\section{Analiza uzyskanych wyników}
+
+Jak widzimy błędy w przypadku naszych macierzy są naprawdę małe, co pokazuje że metoda Jacobiego jest naprawdę całkiem dokładna.
+
+Jednakże przy tworzeniu testów zauważyłem, że w wielu przypadkach metoda po prostu nie jest zbieżna. Można to bez problemu również zauważyć, ponieważ promień spektralny ma być mniejszy od 1. 
+
+Podsumowując metoda Jacobiego jest zbieżna dla małej, specyficznej grupy macierzy, ale gdy już jest zbieżna jest całkiem dokładna.
+
+\section{Dodatek}
+
+Chciałem skorzystać z tego, że typ macierzy, z której korzystałem w tym zadaniu ma w wielu miejscach 0, tak więc myślałem, że może szukanie rozwiązania oddzielnie dla każdego układu równań może być szybsze:
+\[c_{i,i}x_i+s_{i,n+i}x_{n+i}=b_i\]
+\[-s_{n+i,i}x_i+c_{n+i,n+i}x_{n+i}=b_{n+i}\]
+Dla \(i=1,\dots,n\).
+
+Jednak po zmierzeniu czasu dla zwykłego rozwiązania i dla rozwiązania, które rozdziela układ równań w sposób jaki zaproponowałem okazało się, że ten sposób jest trochę wolniejszy, więc porzuciłem ten pomysł. 
+
+\end{document}
