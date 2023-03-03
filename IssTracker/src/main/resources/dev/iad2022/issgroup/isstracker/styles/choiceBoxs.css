@@ -1,0 +1,23 @@
+.choice-box{
+    -fx-background-color: black;
+    -fx-border-color: #F4F2F3;
+    -fx-border-width: 2;
+    -fx-border-radius: 5;
+}
+
+.choice-box .label {
+    -fx-text-fill: white;
+    -fx-background-color: black;
+}
+
+.choice-box div {
+    -fx-text-fill: white;
+    -fx-background-color: black;
+}
+
+.choice-box .context-menu {
+    -fx-background-color: black;
+    -fx-border-color: white;
+    -fx-border-radius: 5;
+    -fx-border-width: 2;
+}
