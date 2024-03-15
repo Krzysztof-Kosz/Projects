@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+{% load static %}
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moja Strona</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('https://www.niesamowitapolska.eu/images/malopolska/pieniny/108517811_m.jpg');
+        }
+
+        a{
+            text-decoration: none;
+        }
+
+        #navbar {
+            background-color: #E0F14A; /* Fioletowy kolor paska nawigacyjnego */
+            color: #fff; /* Biały kolor tekstu na pasku nawigacyjnym */
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+
+        #logo {
+            margin-right: auto;
+        }
+
+        #nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        #user-info {
+            margin-left: auto;
+            display: flex;
+            gap: 20px;
+        }
+
+        #post-container {
+            max-width: 1000px;
+            margin: 10px auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-top: 20px;
+            position: relative;
+            background-color: aquamarine;
+        }
+
+        #edit-btn {
+            position: absolute;
+            top: 5px;
+            right: 50px;
+            padding: 5px;
+            margin-right: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 5px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #post-title {
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        #post-content {
+            text-align: justify;
+        }
+    </style>
+</head>
+<body>
+
+<div id="navbar">
+    <div id="logo">
+        <!-- Tutaj umieść kod do dodania loga -->
+        <img src="{% static 'images/proj1.png' %}" alt="Logo" width=100px height=auto>
+    </div>
+
+    <div id="nav-links">
+        <a href="http://127.0.0.1:8000/">Blog</a>
+        <a href="http://127.0.0.1:8000/forum/">Forum</a>
+        <a href="http://127.0.0.1:8000/onas/">O Nas</a>
+    </div>
+
+    <div id="user-info">
+        <span>Witaj Krzysztof!</span>
+        <a href="http://127.0.0.1:8000/article_form/">Stwórz artykuł</a>
+        <a href="http://127.0.0.1:8000/logout/">Wyloguj</a>
+    </div>
+</div>
+
+<div id="post-container">
+    <button id="edit-btn">Edit</button>
+    <button id="delete-btn">Delete</button>
+
+    <h1 id="post-title">Tytuł Posta</h1>
+
+    <p id="post-content">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vitae mauris quis leo consequat
+        consectetur. Proin non ullamcorper ex, eu efficitur odio. Sed eu nunc vel lacus sagittis tempus in
+        eu justo. Aenean eget dictum felis, ac cursus est. In hac habitasse platea dictumst. Pellentesque
+        habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Duis ultrices, ex
+        quis vehicula dapibus, elit tortor tristique dui, vitae fermentum elit ipsum id quam.
+    </p>
+</div>
+
+</body>
+</html>

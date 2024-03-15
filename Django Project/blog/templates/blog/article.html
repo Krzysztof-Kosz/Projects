@@ -1,0 +1,41 @@
+{% extends 'blog\base.html' %}
+
+{% block content %}
+<div class="post-container">
+    {% if user.is_staff %}
+    <button id="edit-btn"><a href="update_article/{{x.id}}">Edit</a></button>
+    <button id="delete-btn"><a href="delete_article/{{x.id}}">Delete</a></button>
+    {% endif %}
+    <h1 class="post-title">{{article.title}}</h1>
+    <h6 class="post-author">{{article.author}}</h6>
+    <p class="post-content">
+        {{article.content}}
+    </p>
+  </div>
+
+<div class="heading">
+  <h1>Comment Section</h1>
+</div>
+<ul>
+  {% for x in comments %}
+  <div class="comment-container">
+    <h1 class="post-title">{{ x.title}}</h1>
+    <h6 class="post-author">{{x.author}}</h6>
+    <p class="post-content">
+        {{x.content}}
+    </p>
+  </div>
+  {% endfor %}
+</ul>
+
+<div class="form-container">
+    <input type="checkbox" id="show-form" class="show-form-checkbox">
+    <label for="show-form" class="show-form-label">Dodaj komentarz</label>
+
+    <form id="my-form" method="POST" action="">
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type="submit" value="Submit" />
+    </form>
+</div>
+{% endblock content %}

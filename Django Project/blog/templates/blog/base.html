@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MalopolskaForum</title>
+    <link rel="stylesheet" href="{% static 'css/mystyle.css' %}">
+</head>
+<body>
+
+<header>
+    <div class="brand">MalopolskaWKieszeni</div>
+
+    <nav>
+        <a href="{% url 'blog-home' %}">Blog</a>
+        <a href="{% url 'forum' %}">Forum</a>
+        <a href="http://127.0.0.1:8000">Kontakt</a>
+    </nav>
+
+    <div class="user-actions">
+        {% if user.is_authenticated %}
+        <!-- Wygląd dla zalogowanego użytkownika -->
+        <p>Witaj, {{ user.username }}!</p>
+        {% if user.is_staff %}
+        <p><a href ="{% url 'article_form' %}">Stwórz artykuł</a></p>
+        {% endif %}
+        <a href="{% url 'logout' %}">Wyloguj</a>
+        {% else %}
+        <!-- Wygląd dla niezalogowanego użytkownika -->
+        <a href="{% url 'login' %}">Zaloguj się</a>
+        <a href="{% url 'register' %}">Zarejestruj się</a>
+        {% endif %}
+        {% comment %}<a href="#">Zaloguj się</a>
+        <span>lub</span>
+        <a href="#">Zarejestruj się</a>
+        {% endcomment %}
+    </div>
+</header>
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+{% block content %}}
+
+{% endblock content %}
+<footer>
+    <div class="author-info">
+        <img src="{% static 'images/proj1.png' %}" alt="Author Image" width=100px height=auto>
+        <div class="author-name">Krzysztof Kosz</div>
+    </div>
+
+    <div class="author-info">
+        <img src="{% static 'images/maloposlka.png' %}" alt="Author Image" width=100px height=auto>
+    </div>
+</footer>
+
+</body>
+</html>

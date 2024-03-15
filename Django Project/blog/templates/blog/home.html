@@ -1,0 +1,25 @@
+{% extends 'blog\base.html' %}
+
+{% block content %}
+
+<div class="heading">
+  <h1>Artykuły</h1>
+</div>
+
+<ul>
+  {% for x in articles %}
+  <div class="post-container">
+    {% if user.is_staff %}
+    <button id="edit-btn"><a href="update_article/{{x.id}}">Edit</a></button>
+    <button id="delete-btn"><a href="delete_article/{{x.id}}">Delete</a></button>
+    {% endif %}
+    <h1 class="post-title"><a href="article/{{x.id}}">{{ x.title}}</a></h1>
+    <h6 class="post-author">{{x.author}}</h6>
+    <p class="post-content">
+        {{x.summary}}
+    </p>
+  </div>
+  {% endfor %}
+</ul>
+
+{% endblock content %}
